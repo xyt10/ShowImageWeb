@@ -17,6 +17,32 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# --- 访问控制 ---
+ACCESS_PASSWORD = st.secrets.get("access_password")
+if ACCESS_PASSWORD is None:
+    ACCESS_PASSWORD = os.environ.get("APP_ACCESS_PASSWORD")
+if not ACCESS_PASSWORD:
+    ACCESS_PASSWORD = "123456"
+
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+    st.title("🔒 访问受限")
+    st.write("此应用已设置访问密码，请输入正确的密码以继续使用。")
+
+    password_input = st.text_input("访问密码", type="password", help="可通过 APP_ACCESS_PASSWORD 环境变量或 Streamlit secrets 配置 access_password 进行修改。默认密码：123456")
+
+    if st.button("进入应用", use_container_width=True):
+        if password_input == ACCESS_PASSWORD:
+            st.session_state.authenticated = True
+            st.success("验证通过，正在进入应用...")
+            st.rerun()
+        else:
+            st.error("密码错误，请重试。")
+
+    st.stop()
+
 # 强制页面从顶部开始 - 在最开始执行
 st.markdown("""
 <script>
@@ -760,29 +786,17 @@ with st.sidebar:
         label_visibility="visible"
     )
 
-    # --- 默认 Key ---
-    DEFAULT_API_KEY = "sk-zKTGcw8llBFZLpXAAsxTmMSmCfY8DNfe"
-
     # 尝试加载本地保存的API Key
     saved_key = load_saved_api_key()
 
-    # 如果有保存的key，使用保存的；否则显示默认key
-    if saved_key:
-        api_key = st.text_input(
-            "🔐 API Key",
-            value=saved_key,
-            type="password",
-            placeholder="sk-...",
-            help="已加载本地保存的API Key"
-        )
-    else:
-        api_key = st.text_input(
-            "🔐 API Key",
-            value=DEFAULT_API_KEY,
-            type="password",
-            placeholder="sk-...",
-            help="已预置默认密钥，您也可以修改为自己的密钥"
-        )
+    # 如果有保存的key，使用保存的；否则留空由用户填写
+    api_key = st.text_input(
+        "🔐 API Key",
+        value=saved_key or "",
+        type="password",
+        placeholder="请输入自己的密钥，如 sk-...",
+        help="请填写您的API Key，可选择保存到本地便于下次使用"
+    )
 
     # 添加保存API Key的勾选框
     # 如果有保存的key，默认勾选；否则使用session状态
