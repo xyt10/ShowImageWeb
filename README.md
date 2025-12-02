@@ -19,7 +19,6 @@ AI图像生成网页交互平台 - 基于Streamlit构建的Web应用，提供简
 
 ### 最新优化
 - **反爬虫增强**: 集成CloudScraper技术，解决cf防护机制的403报错
-- **预设公用API Key**: 提供默认密钥，开箱即用无需填写key（可能被蹬完）
 - **自有Key保存功能**: 支持API Key本地保存，下次启动自动加载
 - **固定画廊功能**: 支持作品保存，界面刷新不会消失
 - **优化体验**: 删除不必要的组件
@@ -42,10 +41,6 @@ showimageweb/
 └── assets/
     └── showimage-web-demo.png # 应用预览图
 ```
-
-## Key（可蹬）
-
-    sk-zKTGcw8llBFZLpXAAsxTmMSmCfY8DNfe
 
 ## 技术栈
 
@@ -100,6 +95,12 @@ streamlit run app.py --server.address=0.0.0.0 --server.port=8501
 http://localhost:8501
 ```
 
+### 访问密码
+
+- 默认密码：`123456`
+- 通过环境变量 `APP_ACCESS_PASSWORD` 或 Streamlit `secrets.toml` 中的 `access_password` 可自定义访问密码
+- 启动后需要输入正确密码才能进入应用
+
 ## 如何更新？
 ### 拉取最新代码并重建启动服务
 
@@ -111,6 +112,7 @@ http://localhost:8501
 ## API配置
 
 应用支持任意兼容的AI图像生成API：
+> 默认提供示例接口地址，**请自行填写合法的API Key** 后再使用。
 
 ### 支持的API格式
 - **请求方式**: POST
